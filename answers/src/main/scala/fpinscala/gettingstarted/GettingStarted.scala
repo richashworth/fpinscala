@@ -184,5 +184,8 @@ object PolymorphicFunctions {
   // Exercise 5: Implement `compose`
 
   def compose[A, B, C](f: B => C, g: A => B): A => C =
-    a => f(g(a))
+  //    All below are equivalent
+  //  a => f(g(a))
+  //  g andThen f
+    f compose g
 }

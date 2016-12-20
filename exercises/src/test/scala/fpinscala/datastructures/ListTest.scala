@@ -37,4 +37,9 @@ class ListTest extends org.scalatest.FunSuite {
     assert(List.dropWhile(list, f) === List(3, 4, 5, 6, 7))
   }
 
+  test("init should return all but the last element of a list") {
+    val list = List(4, 2, 3000, 3, 4, 5, 6, 7)
+    assert(List.init(list) === List(4, 2, 3000, 3, 4, 5, 6))
+
+  }
 }

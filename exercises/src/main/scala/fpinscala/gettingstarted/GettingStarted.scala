@@ -174,14 +174,14 @@ object PolymorphicFunctions {
   // that they only have one implementation! Here's an example:
 
   def partial1[A, B, C](a: A, f: (A, B) => C): B => C =
-    (b: B) => f(a, b)
+    (b: B) => f(a, b) //note this uses function literal syntax
 
   // Exercise 3: Implement `curry`.
 
   // Note that `=>` associates to the right, so we could
   // write the return type as `A => B => C`
   def curry[A, B, C](f: (A, B) => C): A => (B => C) =
-  (a: A) => ((b: B) => f(a, b)) // note that the types are not required here
+  (a: A) => ((b: B) => f(a, b)) // note that the types are not required here; it is a fn literal!
 
   // NB: The `Function2` trait has a `curried` method already
 

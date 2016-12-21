@@ -1,13 +1,12 @@
 package fpinscala.datastructures
 
 import org.scalatest.FunSuite
+import Tree._
 
 /**
   * Created by Rich on 21/12/2016.
   */
 class TreesTest extends FunSuite {
-
-  import Trees._
 
   val tree = Branch(
     Branch(Leaf(1), Branch(Leaf(2), Leaf(3))),

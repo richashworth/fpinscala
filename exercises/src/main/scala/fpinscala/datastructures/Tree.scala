@@ -5,13 +5,12 @@ import scala.annotation.tailrec
 /**
   * Created by Rich on 21/12/2016.
   */
-object Trees {
 
-  sealed trait Tree[+A]
+sealed trait Tree[+A]
+case class Leaf[A](value: A) extends Tree[A]
+case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
 
-  case class Leaf[A](value: A) extends Tree[A]
-
-  case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
+object Tree {
 
   def size[A](tree: Tree[A]): Int = tree match {
     case Leaf(_) => 1

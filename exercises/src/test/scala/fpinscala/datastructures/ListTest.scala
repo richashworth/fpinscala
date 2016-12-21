@@ -73,10 +73,21 @@ class ListTest extends org.scalatest.FunSuite {
     val reverse = List.reverse(Nil)
     assert(Nil === reverse)
   }
+
   test("reverse should return the reverse of a list") {
     val list = List(1, 2, 3, 4)
     val reverse = List.reverse(list)
     assert(reverse === List(4, 3, 2, 1))
+  }
+
+  test("map should apply a function f to each element") {
+    val list = List(1, 2, 3, 4)
+    val mapped = List.map(list)(_ + 1)
+    assert(List(2, 3, 4, 5) == mapped)
+  }
+
+  test("map should handle the empty list") {
+    assert(Nil === (List.map(List[Int]())(_ + 1)))
   }
 
 }

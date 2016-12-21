@@ -25,6 +25,10 @@ class TreesTest extends FunSuite {
     assert(3 === depth(tree))
   }
 
+  test("depth should correctly handle trees of a single node") {
+    assert(0 === depth(Leaf("a")))
+  }
+
   test("map should apply a function to each node of the tree") {
     val treeF = Branch(
       Branch(Leaf(2), Branch(Leaf(3), Leaf(4))),
@@ -35,6 +39,10 @@ class TreesTest extends FunSuite {
 
   test("fold should behave as expected for sum") {
     assert(11 === fold(tree)(_ + _))
+  }
+
+  test("fold should behave as expected for trees with a single node") {
+    assert(1 === fold(Leaf(1))(_ + _))
   }
 
 }

@@ -59,8 +59,24 @@ class ListTest extends org.scalatest.FunSuite {
 
   test("foldLeft should help compute the product of a list") {
     val list = List(1, 2, 3, 4)
-    val product = List.foldLeft(list, 1)((x, acc) => acc * x)
+    val product = List.foldLeft(list, 1)((acc, x) => acc * x)
     assert(24 === product)
+  }
+
+  test("foldLeft should help compute the length of a list") {
+    val list = List(1, 2, 3, 4)
+    val length = List.foldLeft(list, 0)((acc, _) => acc + 1)
+    assert(4 === length)
+  }
+
+  test("the reverse of an empty list is an empty list") {
+    val reverse = List.reverse(Nil)
+    assert(Nil === reverse)
+  }
+  test("reverse should return the reverse of a list") {
+    val list = List(1, 2, 3, 4)
+    val reverse = List.reverse(list)
+    assert(reverse === List(4, 3, 2, 1))
   }
 
 }

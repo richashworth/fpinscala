@@ -94,5 +94,7 @@ object List {
     case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
   }
 
+  def reverse[A](l: List[A]): List[A] = List.foldLeft(l, List[A]())((acc, x) => Cons(x, acc))
+
   def map[A, B](l: List[A])(f: A => B): List[B] = sys.error("todo")
 }

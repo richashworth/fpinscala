@@ -90,4 +90,27 @@ class ListTest extends org.scalatest.FunSuite {
     assert(Nil === (List.map(List[Int]())(_ + 1)))
   }
 
+  test("filter should handle the empty list") {
+    assert(Nil === (List.filter(List[Int]())(_ % 2 == 0)))
+  }
+
+  test("filter should remove elems that do not satify predicate") {
+    val list = List(1, 2, 3, 4)
+    assert(List(2, 4) === (List.filter(list)(_ % 2 == 0)))
+  }
+
+  test("flatmap should return a list given a list and a function from elem to list") {
+    val list = List(1, 2, 3, 4)
+    assert(List(1, 1, 2, 2, 3, 3, 4, 4) === List.flatMap(list)(i => List(i, i)))
+  }
+
+  test("filter with flatmap should handle the empty list") {
+    assert(Nil === (List.filterWithFlatMap(List[Int]())(_ % 2 == 0)))
+  }
+
+  test("filter with flatmap should remove elems that do not satify predicate") {
+    val list = List(1, 2, 3, 4)
+    assert(List(2, 4) === (List.filterWithFlatMap(list)(_ % 2 == 0)))
+  }
+
 }

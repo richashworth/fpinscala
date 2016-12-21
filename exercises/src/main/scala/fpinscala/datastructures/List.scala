@@ -100,4 +100,22 @@ object List {
     case Nil => Nil
     case Cons(x, xs) => Cons(f(x), map(xs)(f))
   }
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = as match {
+    case Nil => Nil
+    case Cons(x, xs) if (f(x)) => Cons(x, filter(xs)(f))
+    case Cons(_, xs) => filter(xs)(f)
+  }
+
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as match {
+    case Nil => Nil
+    case Cons(x, xs) => append(f(x), flatMap(xs)(f))
+  }
+
+  def filterWithFlatMap[A](as: List[A])(f: A => Boolean): List[A] = List.flatMap(as) {
+    a =>
+      if (f(a)) Cons(a, Nil)
+      else Nil
+  }
+
 }

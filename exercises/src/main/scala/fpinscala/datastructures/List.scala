@@ -112,10 +112,6 @@ object List {
     case Cons(x, xs) => append(f(x), flatMap(xs)(f))
   }
 
-  def filterWithFlatMap[A](as: List[A])(f: A => Boolean): List[A] = List.flatMap(as) {
-    a =>
-      if (f(a)) Cons(a, Nil)
-      else Nil
-  }
+  def filterWithFlatMap[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as)(a => if (f(a)) List(a) else Nil)
 
 }

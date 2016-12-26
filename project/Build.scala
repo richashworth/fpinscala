@@ -1,13 +1,18 @@
 import sbt._
 import Keys._
+import wartremover._
 
 object FPInScalaBuild extends Build {
+
   val opts = Project.defaultSettings ++ Seq(
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    libraryDependencies ++= Seq("org.scalactic" %% "scalactic" % "3.0.1",
-                                "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-                                "org.pegdown" % "pegdown" % "1.6.0" % "test")
+    resolvers += Resolver.sonatypeRepo("releases"),
+//    wartremoverWarnings ++= Warts.unsafe,
+    libraryDependencies ++= Seq(
+      "org.scalactic" %% "scalactic" % "3.0.1",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "org.pegdown" % "pegdown" % "1.6.0" % "test")
   )
 
   lazy val root =
@@ -16,19 +21,22 @@ object FPInScalaBuild extends Build {
       settings = opts ++ Seq(
         onLoadMessage ~= (_ + nio2check())
       )) aggregate(chapterCode, exercises, answers)
+
   lazy val chapterCode =
     Project(id = "chapter-code",
-      base = file("chaptercode"),
-      settings = opts)
+            base = file("chaptercode"),
+            settings = opts)
+
   lazy val exercises =
     Project(id = "exercises",
-      base = file("exercises"),
-      settings = opts ++ (testOptions in Test ++= Seq(Tests.Argument(TestFrameworks.ScalaTest, "-o"), Tests.Argument(TestFrameworks.ScalaTest, "-h", "exercises/target/test-reports")))
+            base = file("exercises"),
+            settings = opts ++ (testOptions in Test ++= Seq(Tests.Argument(TestFrameworks.ScalaTest, "-o"), Tests.Argument(TestFrameworks.ScalaTest, "-h", "exercises/target/test-reports")))
     )
+
   lazy val answers =
     Project(id = "answers",
-      base = file("answers"),
-      settings = opts)
+          base = file("answers"),
+          settings = opts)
 
   def nio2check(): String = {
     val cls = "java.nio.channels.AsynchronousFileChannel"

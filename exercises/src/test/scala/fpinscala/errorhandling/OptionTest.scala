@@ -8,9 +8,9 @@ import org.scalatest.FunSuite
 class OptionTest extends FunSuite {
 
   private val f = (x: Int) => x + 1
+  private val x = Some(4)
 
   test("testMap for Some(x)") {
-    val x = Some(4)
     assert(Some(5) === x.map(f))
   }
 
@@ -18,19 +18,12 @@ class OptionTest extends FunSuite {
     assert(None === None.map(f))
   }
 
-  test("testFlatMap") {
+  test("testGetOrElse for Some(x)") {
+    assert(4 === x.getOrElse(0))
   }
 
-  test("testFilter") {
-
-  }
-
-  test("testGetOrElse") {
-
-  }
-
-  test("testOrElse") {
-
+  test("testGetOrElse None") {
+    assert(0 === None.getOrElse(0))
   }
 
 }

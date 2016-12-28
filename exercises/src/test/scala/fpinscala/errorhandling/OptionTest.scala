@@ -26,4 +26,13 @@ class OptionTest extends FunSuite {
     assert(0 === None.getOrElse(0))
   }
 
+  test("testVariance empty seq") {
+    assert(None === Option.variance(Nil))
+  }
+
+  test("testVariance non-empty seq") {
+    val seq = Seq(1.0, 2.0, 3.0, 4.0, 5.0)
+    assert(Some(2.0) === Option.variance(seq))
+  }
+
 }

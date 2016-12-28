@@ -52,7 +52,7 @@ object Option {
     else Some(xs.sum / xs.length)
 
   //if the mean of a seq is m then the variance is the mean of (x-m)^2 for all x in seq
-  def variance(xs: Seq[Double]): Option[Double] = i
+  def variance(xs: Seq[Double]): Option[Double] = mean(xs).flatMap((m) => mean(xs.map((x) =>math.pow((x - m),2))))
 
   def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = sys.error("todo")
 

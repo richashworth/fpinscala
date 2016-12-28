@@ -1,6 +1,5 @@
 package fpinscala.errorhandling
 
-
 import scala.{Option => _, Some => _, Either => _, _}
 // hide std library `Option`, `Some` and `Either`, since we are writing our own in this chapter
 
@@ -52,7 +51,8 @@ object Option {
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
 
-  def variance(xs: Seq[Double]): Option[Double] = sys.error("todo")
+  //if the mean of a seq is m then the variance is the mean of (x-m)^2 for all x in seq
+  def variance(xs: Seq[Double]): Option[Double] = i
 
   def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = sys.error("todo")
 

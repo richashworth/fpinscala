@@ -53,7 +53,8 @@ class OptionTest extends FunSuite {
   }
 
   test("sequence should return Some(List) if no input Options are None") {
-    assert(Some(List(0,1,2))=== Option.sequence(List(Some(0), Some(1), Some(2))))
+    assert(
+      Some(List(0, 1, 2)) === Option.sequence(List(Some(0), Some(1), Some(2))))
   }
 
 }

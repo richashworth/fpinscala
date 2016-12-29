@@ -58,7 +58,7 @@ object Option {
     a flatMap (aa => b map ((bb) => f(aa, bb)))
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] =
-    a.foldRight[Option[List[A]]](Some(Nil))((x,y) => map2(x,y)(_ :: _))
+    a.foldRight[Option[List[A]]](Some(Nil))((x, y) => map2(x, y)(_ :: _))
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] =
     sys.error("todo")

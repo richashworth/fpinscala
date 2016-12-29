@@ -35,4 +35,25 @@ class OptionTest extends FunSuite {
     assert(Some(2.0) === Option.variance(seq))
   }
 
+  test("map2 should return a Some() if neither values are None") {
+    assert(
+      Some(42) === Option.map2(Some(20), Some(22))((x: Int, y: Int) => x + y))
+  }
+
+  test("map2 should return None if the first value is None") {
+    assert(None === Option.map2(None, Some(0))((x: Int, y) => x + y))
+  }
+
+  test("map2 should return None if the second value is None") {
+    assert(None === Option.map2(None, Some(0))((x: Int, y) => x + y))
+  }
+
+  test("sequence should return None if any input Options are None") {
+    assert(None === Option.sequence(List(Some(0), Some(1), None, Some(2))))
+  }
+
+  test("sequence should return Some(List) if no input Options are None") {
+    assert(Some(List(0,1,2))=== Option.sequence(List(Some(0), Some(1), Some(2))))
+  }
+
 }

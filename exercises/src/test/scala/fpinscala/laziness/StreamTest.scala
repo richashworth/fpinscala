@@ -57,25 +57,45 @@ class StreamTest extends FunSuite {
     assert(!Stream(2, 4, 7).forAll(_ % 2 == 0))
   }
 
+  test("testHeadOption empty stream") {
+    assert(None === Stream().headOption)
+  }
 
   test("testHeadOption") {
+    assert(Some(1) === stream.headOption)
+  }
 
+  test("testMap") {
+    assert(List(2, 3, 4, 5) === stream.map(_ + 1).toList)
+  }
+
+  test("testMap empty stream") {
+    assert(Empty === Empty.map((x) => x))
   }
 
   test("testFoldRight") {
-
+    assert(10 === stream.foldRight(0)(_ + _))
   }
 
-  test("testFind") {
-
+  test("testFilter") {
+    assert(List(2, 4) === stream.filter(_ % 2 == 0).toList)
   }
 
-  test("testExists") {
-
+  test("testFlatMap") {
+    assert(
+      List(1, 1, 2, 2, 3, 3, 4,
+        4) === stream.flatMap(x => Stream(x, x)).toList)
   }
 
-  test("testStartsWith") {
-
+  test("testConstant") {
+    assert(
+      List("richard", "richard") === Stream.constant("richard").take(2).toList)
   }
+
+  test("testFrom") {
+    assert(List(1, 2, 3, 4) === Stream.from(1).take(4).toList)
+  }
+
+  test("testStartsWith") {}
 
 }

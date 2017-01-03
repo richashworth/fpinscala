@@ -42,10 +42,19 @@ class StreamTest extends FunSuite {
   }
 
   test("testTakeWhile") {
+    assert(List(1, 2, 3) === stream.takeWhile(_ < 4).toList)
   }
 
-  test("testForAll") {
+  test("testTakeWhile empty stream") {
+    assert(List() === Stream[Int]().takeWhile(_ < 4).toList)
+  }
 
+  test("testForAll +ve") {
+    assert(Stream(2, 4, 8).forAll(_ % 2 == 0))
+  }
+
+  test("testForAll -ve") {
+    assert(!Stream(2, 4, 7).forAll(_ % 2 == 0))
   }
 
 

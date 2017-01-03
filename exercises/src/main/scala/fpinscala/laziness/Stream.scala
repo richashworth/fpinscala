@@ -46,8 +46,7 @@ trait Stream[+A] {
   }
 
   def takeWhile(p: A => Boolean): Stream[A] =
-    foldRight(empty[A])((h, t) =>
-      if (p(h)) cons(h, t) else empty)
+    foldRight(empty[A])((h, t) => if (p(h)) cons(h, t) else empty)
 
   def headOption: Option[A] = sys.error("todo")
 

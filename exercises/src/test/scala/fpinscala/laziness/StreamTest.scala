@@ -21,10 +21,6 @@ class StreamTest extends FunSuite {
     assert(List(1, 2) === stream.take(2).toList)
   }
 
-  test("testTakeUsingUnfold") {
-    assert(List(1, 2) === stream.takeUsingUnfold(2).toList)
-  }
-
   test("testTake 1 elem") {
     assert(List(1) === stream.take(1).toList)
   }
@@ -47,10 +43,6 @@ class StreamTest extends FunSuite {
 
   test("testTakeWhile") {
     assert(List(1, 2, 3) === stream.takeWhile(_ < 4).toList)
-  }
-
-  test("testTakeWhileUsingFold") {
-    assert(List(1, 2, 3) === stream.takeWhileUsingUnfold(_ < 4).toList)
   }
 
   test("testTakeWhile empty stream") {

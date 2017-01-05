@@ -21,7 +21,7 @@ object RNG { // NB - this was called SimpleRNG in the book text
 
   val int: Rand[Int] = _.nextInt
 
-  def unit[A](a: A): Rand[A] =
+  def unit[A](a: A): Rand[A] = // think of this as the 'constructor' for the Rand[A] type
     rng => (a, rng)
 
   def map[A, B](s: Rand[A])(f: A => B): Rand[B] =

@@ -4,7 +4,7 @@ trait RNG {
   def nextInt: (Int, RNG) // Should generate a random `Int`. We'll later define other functions in terms of `nextInt`.
 }
 
-object RNG {  // NB - this was called SimpleRNG in the book text
+object RNG { // NB - this was called SimpleRNG in the book text
 
   case class Simple(seed: Long) extends RNG {
     def nextInt: (Int, RNG) = {
@@ -28,7 +28,11 @@ object RNG {  // NB - this was called SimpleRNG in the book text
       (f(a), rng2)
     }
 
-  def nonNegativeInt(rng: RNG): (Int, RNG) = ???
+  def nonNegativeInt(rng: RNG): (Int, RNG) = {
+    val (res, nextState) = rng.nextInt
+    if (res < 0) (-(res + 1), nextState)
+    else (res, nextState)
+  }
 
   def double(rng: RNG): (Double, RNG) = ???
 

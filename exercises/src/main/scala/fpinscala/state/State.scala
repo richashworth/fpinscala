@@ -34,11 +34,22 @@ object RNG { // NB - this was called SimpleRNG in the book text
     else (res, nextState)
   }
 
-  def double(rng: RNG): (Double, RNG) = ???
+  def double(rng: RNG): (Double, RNG) = {
+    val (res, nextState) = nonNegativeInt(rng)
+    val strDble = "0." + res
+    (strDble.toDouble, nextState)
+  }
 
-  def intDouble(rng: RNG): ((Int, Double), RNG) = ???
+  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+    val (intResult, nextState) = rng.nextInt
+    val (doubleResult, _) = double(rng)
+    ((intResult, doubleResult), nextState)
+  }
 
-  def doubleInt(rng: RNG): ((Double, Int), RNG) = ???
+  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+    val ((intResult, doubleResult), nextState) = intDouble(rng)
+    ((doubleResult, intResult), nextState)
+  }
 
   def double3(rng: RNG): ((Double, Double, Double), RNG) = ???
 

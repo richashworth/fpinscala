@@ -1,5 +1,7 @@
 package fpinscala.state
 
+import annotation.tailrec
+
 trait RNG {
   def nextInt: (Int, RNG) // Should generate a random `Int`. We'll later define other functions in terms of `nextInt`.
 }
@@ -59,6 +61,7 @@ object RNG { // NB - this was called SimpleRNG in the book text
   }
 
   def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    @tailrec
     def go(c: Int, acc: List[Int], state: RNG): (List[Int], RNG) = {
       val (intResult, nextState) = state.nextInt
       if (c == 0) (acc, nextState)

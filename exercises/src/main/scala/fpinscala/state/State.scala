@@ -51,9 +51,23 @@ object RNG { // NB - this was called SimpleRNG in the book text
     ((doubleResult, intResult), nextState)
   }
 
-  def double3(rng: RNG): ((Double, Double, Double), RNG) = ???
+  def double3(rng: RNG): ((Double, Double, Double), RNG) = {
+    val (double1, rng2) = double(rng)
+    val (double2, rng3) = double(rng2)
+    val (double3, rng4) = double(rng3)
+    ((double1, double2, double3), rng4)
+  }
 
-  def ints(count: Int)(rng: RNG): (List[Int], RNG) = ???
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    def go(c: Int, acc: List[Int], state: RNG): (List[Int], RNG) = {
+      val (intResult, nextState) = state.nextInt
+      if (c == 0) (acc, nextState)
+      else {
+        go(c - 1, intResult :: acc, nextState)
+      }
+    }
+    go(count, List(), rng)
+  }
 
   def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
 

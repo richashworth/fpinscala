@@ -32,9 +32,6 @@ object RNG { // NB - this was called SimpleRNG in the book text
 
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
-  def nonNegativeLessThan(n: Int): Rand[Int] =
-    nonNegativeLessThan(n)(rng)
-
   def doubleUsingMap: Rand[Double] =
     map(nonNegativeInt)(i => ("0." + i).toDouble)
 
@@ -90,7 +87,24 @@ object RNG { // NB - this was called SimpleRNG in the book text
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
     fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
 
-  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = ???
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng => {
+      val (a, rng2) = f(rng)
+      g(a)(rng2)
+    }
+
+  def nonNegativeLessThan(n: Int): Rand[Int] = {
+    flatMap(nonNegativeInt)((x) =>
+      if (x < n) unit(x) else nonNegativeLessThan(n))
+  }
+
+  def mapUsingFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] =
+    flatMap(s)(a => unit(f(a)))
+
+  def map2UsingFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(
+      f: (A, B) => C): Rand[C] =
+    flatMap(ra)(a => map(rb)(b => f(a, b)))
+
 }
 
 case class State[S, +A](run: S => (A, S)) {

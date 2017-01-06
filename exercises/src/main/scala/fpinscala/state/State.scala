@@ -32,7 +32,7 @@ object RNG { // NB - this was called SimpleRNG in the book text
 
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
-  def nonNegativeLessThan(n:Int):Rand[Int]=
+  def nonNegativeLessThan(n: Int): Rand[Int] =
     nonNegativeLessThan(n)(rng)
 
   def doubleUsingMap: Rand[Double] =

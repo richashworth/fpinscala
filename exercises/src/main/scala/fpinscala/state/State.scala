@@ -1,6 +1,6 @@
 package fpinscala.state
 
-import annotation.tailrec
+import scala.annotation.tailrec
 
 trait RNG {
   // Should generate a random `Int`. We'll later define other functions in terms of `nextInt`.
@@ -113,14 +113,17 @@ object RNG { // NB - this was called SimpleRNG in the book text
 }
 
 case class State[S, +A](run: S => (A, S)) {
+  // import State._
+
   def map[B](f: A => B): State[S, B] =
+    // flatMap(a => unit(f(a)))
     State(s => {
       val (a, s1) = run(s)
-      (f(a), s)
+      (f(a), s1)
     })
-  // flatMap(a => State.unit(f(a)))
 
-  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = ???
+  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
+    flatMap(a => sb.map(b => f(a, b)))
 
   def flatMap[B](f: A => State[S, B]): State[S, B] =
     State(s => {
@@ -140,6 +143,8 @@ object State {
   type Rand[A] = State[RNG, A]
 
   def unit[S, A](a: A): State[S, A] = State(s => (a, s))
+
+  def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] = ???
 
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
 }

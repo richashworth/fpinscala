@@ -115,6 +115,10 @@ object RNG { // NB - this was called SimpleRNG in the book text
 case class State[S, +A](run: S => (A, S)) {
   // import State._
 
+  def get[S]: State[S, S] = State(s => (s, s))
+
+  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
+
   def map[B](f: A => B): State[S, B] =
     // flatMap(a => unit(f(a)))
     State(s => {
@@ -133,12 +137,6 @@ case class State[S, +A](run: S => (A, S)) {
 
 }
 
-sealed trait Input
-case object Coin extends Input
-case object Turn extends Input
-
-case class Machine(locked: Boolean, candies: Int, coins: Int)
-
 object State {
   type Rand[A] = State[RNG, A]
 
@@ -148,3 +146,9 @@ object State {
 
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
 }
+
+sealed trait Input
+case object Coin extends Input
+case object Turn extends Input
+
+case class Machine(locked: Boolean, candies: Int, coins: Int)

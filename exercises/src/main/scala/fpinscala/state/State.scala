@@ -26,8 +26,7 @@ object RNG { // NB - this was called SimpleRNG in the book text
 
   val int: Rand[Int] = _.nextInt
 
-  def unit[A](a: A): Rand[A] = // think of this as the 'constructor' for the Rand[A] type
-    rng => (a, rng)
+  def unit[A](a: A): Rand[A] = rng => (a, rng)
 
   def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
     rng => {
@@ -142,7 +141,11 @@ object State {
 
   def unit[S, A](a: A): State[S, A] = State(s => (a, s))
 
-  def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] = ???
+  // def sequenceViaFoldRight[S,A](sas: List[State[S, A]]): State[S, List[A]] =
+  //   sas.foldRight(unit[S, List[A]](List()))((f, acc) => f.map2(acc)(_ :: _))
+  //
+  def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] =
+    fs.foldRight(unit(List()))(()
 
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
 }

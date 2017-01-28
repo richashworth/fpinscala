@@ -108,18 +108,14 @@ object RNG { // NB - this was called SimpleRNG in the book text
   def map2UsingFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(
       f: (A, B) => C): Rand[C] =
     flatMap(ra)(a => map(rb)(b => f(a, b)))
-
 }
 
+import State._
+
 case class State[S, +A](run: S => (A, S)) {
-  // import State._
-
-  def get[S]: State[S, S] = State(s => (s, s))
-
-  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
 
   def map[B](f: A => B): State[S, B] =
-    // flatMap(a => unit(f(a)))
+    // flatMap(a => unit(f(a)))    [map can be written in terms of flatMap!]
     State(s => {
       val (a, s1) = run(s)
       (f(a), s1)
@@ -133,25 +129,66 @@ case class State[S, +A](run: S => (A, S)) {
       val (a, s1) = run(s)
       f(a).run(s1)
     })
-
 }
 
 object State {
+
   type Rand[A] = State[RNG, A]
 
   def unit[S, A](a: A): State[S, A] = State(s => (a, s))
 
-  // def sequenceViaFoldRight[S,A](sas: List[State[S, A]]): State[S, List[A]] =
-  //   sas.foldRight(unit[S, List[A]](List()))((f, acc) => f.map2(acc)(_ :: _))
-  //
   def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] =
-    fs.foldRight(unit(List()))(()
+    fs.foldRight(unit[S, List[A]](List()))(
+      (nextState: State[S, A], acc: State[S, List[A]]) =>
+        nextState.map2(acc)(_ :: _))
 
-  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
+  def modify[S](f: S => S): State[S, Unit] =
+    for {
+      s <- get // Gets the current state and assigns it to `s`.
+      _ <- set(f(s)) // Sets the new state to `f` applied to `s`.
+    } yield ()
+
+  def get[S]: State[S, S] = State(s => (s, s))
+
+  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
 }
 
-sealed trait Input
+sealed trait Input extends Product with Serializable
 case object Coin extends Input
 case object Turn extends Input
 
 case class Machine(locked: Boolean, candies: Int, coins: Int)
+
+object VendingMachineInterpreter {
+
+  def processInput =
+    (input: Input) =>
+      (machine: Machine) =>
+        (input, machine) match {
+
+          // a machine with no candy ignores all inputs
+          case (_, Machine(_, 0, _)) => machine
+
+          // inserting a coin in an unlocked machine does nothing
+          case (Coin, Machine(false, _, _)) => machine
+
+          // turning the knob on a locked machine does nothing
+          case (Turn, Machine(true, _, _)) => machine
+
+          //inserting a coin into a locked machine will unlock it if there's candy left
+          case (Coin, Machine(true, candies, coins)) =>
+            Machine(false, candies, coins + 1)
+
+          // turning the knob on an unlocked machine will dispense then lock
+          case (Turn, Machine(false, candies, coins)) =>
+            Machine(true, candies - 1, coins)
+    }
+
+  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = {
+    for {
+      _ <- sequence(inputs.map((i) => modify(processInput(i))))
+      s <- get
+    } yield (s.candies, s.coins)
+  }
+
+}

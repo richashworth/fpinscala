@@ -160,35 +160,42 @@ case object Turn extends Input
 case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object VendingMachineInterpreter {
+  def processInput: Input => Machine => Machine = {
+    (input: Input) => (machine: Machine) =>
+      (input, machine) match {
 
-  def processInput: Input => Machine => Machine =
-    (input: Input) =>
-      (machine: Machine) =>
-        (input, machine) match {
+        // a machine with no candy ignores all inputs
+        case (_, Machine(_, 0, _)) => machine
 
-          // a machine with no candy ignores all inputs
-          case (_, Machine(_, 0, _)) => machine
+        // inserting a coin in an unlocked machine does nothing
+        case (Coin, Machine(false, _, _)) => machine
 
-          // inserting a coin in an unlocked machine does nothing
-          case (Coin, Machine(false, _, _)) => machine
+        // turning the knob on a locked machine does nothing
+        case (Turn, Machine(true, _, _)) => machine
 
-          // turning the knob on a locked machine does nothing
-          case (Turn, Machine(true, _, _)) => machine
+        //inserting a coin into a locked machine will unlock it if there's candy left
+        case (Coin, Machine(true, candies, coins)) =>
+          Machine(false, candies, coins + 1)
 
-          //inserting a coin into a locked machine will unlock it if there's candy left
-          case (Coin, Machine(true, candies, coins)) =>
-            Machine(false, candies, coins + 1)
-
-          // turning the knob on an unlocked machine will dispense then lock
-          case (Turn, Machine(false, candies, coins)) =>
-            Machine(true, candies - 1, coins)
-    }
+        // turning the knob on an unlocked machine will dispense then lock
+        case (Turn, Machine(false, candies, coins)) =>
+          Machine(true, candies - 1, coins)
+      }
+  }
 
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = {
-    for {
-      _ <- sequence(inputs.map((i) => modify(processInput(i))))
-      s <- get
-    } yield (s.candies, s.coins)
+
+    //1) Turn each command ('i') into a 'modification action' of type State[Machine, Unit]
+    val prog: State[Machine, List[Unit]] =
+      sequence(inputs.map((cmd) => modify(processInput(cmd))))
+
+    //2) For the program's state, map this into the desired result type
+    prog.flatMap((s) => get.map((m: Machine) => (m.candies, m.coins)))
+
+    // for {
+    //   _ <- sequence(inputs.map((i) => modify(processInput(i))))
+    //   s <- get
+    // } yield (s.candies, s.coins)
   }
 
 }

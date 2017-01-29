@@ -15,9 +15,9 @@ class StateTest extends FunSuite {
     // Attempt to buy 4 candies
     val inputCommands = List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn)
 
-    val program = VendingMachineInterpreter.simulateMachine(inputCommands)
+    val program: State[Machine, (Int, Int)] = VendingMachineInterpreter.simulateMachine(inputCommands)
 
-    val result = program.run(initialState)
+    val result: ((Int, Int), Machine) = program.run(initialState)
 
     assert(result === ((1,14), Machine(true, 1, 14)))
   }

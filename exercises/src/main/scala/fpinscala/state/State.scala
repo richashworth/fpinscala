@@ -161,7 +161,7 @@ case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object VendingMachineInterpreter {
 
-  def processInput =
+  def processInput: Input => Machine => Machine =
     (input: Input) =>
       (machine: Machine) =>
         (input, machine) match {

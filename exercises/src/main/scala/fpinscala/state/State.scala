@@ -153,7 +153,7 @@ object State {
   def set[S](s: S): State[S, Unit] = State(_ => ((), s))
 }
 
-sealed trait Input extends Product with Serializable
+sealed trait Input
 case object Coin extends Input
 case object Turn extends Input
 

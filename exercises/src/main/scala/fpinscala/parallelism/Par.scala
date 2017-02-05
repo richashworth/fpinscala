@@ -44,17 +44,61 @@ object Par {
   def sequence[A](ps: List[Par[A]]): Par[List[A]] =
     ps.foldRight(unit(List[A]()))((a, acc) => map2(a, acc)(_ :: _))
 
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+    val fbs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(fbs)
+  }
+
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = fork {
+    val lists: Par[List[List[A]]] =
+      parMap(as)(a => if (f(a)) List(a) else List())
+    map(lists)(_.flatten)
+  }
+
   def equal[A](e: ExecutorService)(p: Par[A], p2: Par[A]): Boolean =
     p(e).get == p2(e).get
 
   def delay[A](fa: => Par[A]): Par[A] =
     es => fa(es)
 
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+    (es: ExecutorService) => {
+      val index: Int = run(es)(n).get
+      run(es)(choices(index))
+    }
+
+  def choiceUsingChoiceN[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    choiceN(map(cond)((b) => if (b) 0 else 1))(List(t, f))
+
   def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
     es =>
       if (run(es)(cond).get)
         t(es) // Notice we are blocking on the result of `cond`.
       else f(es)
+
+  def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] =
+    es => {
+      val key = run(es)(pa).get
+      run(es)(choices(key))
+    }
+
+  def choiceUsingChooser[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    chooser(cond)(cond => if (cond) t else f)
+
+  def choiceNUsingChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+    chooser(n)(choices(_))
+
+  def join[A](a: Par[Par[A]]): Par[A] = es => {
+    val aGot = run(es)(a).get
+    run(es)(aGot)
+  }
+
+  def flatMap[A, B](a: Par[A])(f: A => Par[B]): Par[B] = {
+    val m: Par[Par[B]] = map(a)(f)
+    join(m)
+  }
+
+  def joinUsingFlatMap[A](a: Par[Par[A]]): Par[A] = flatMap(a)(x => x)
 
   /* Gives us infix syntax for `Par`. */
   implicit def toParOps[A](p: Par[A]): ParOps[A] = new ParOps(p)

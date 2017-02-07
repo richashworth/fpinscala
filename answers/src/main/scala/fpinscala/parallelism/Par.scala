@@ -126,7 +126,7 @@ object Par {
   def joinViaFlatMap[A](a: Par[Par[A]]): Par[A] =
     flatMap(a)(x => x)
 
-  de flatMapViaJoin[A,B](p: Par[A])(f: A => Par[B]): Par[B] =
+  def flatMapViaJoin[A,B](p: Par[A])(f: A => Par[B]): Par[B] =
     join(map(p)(f))
   /* Gives us infix syntax for `Par`. */
   implicit def toParOps[A](p: Par[A]): ParOps[A] = new ParOps(p)

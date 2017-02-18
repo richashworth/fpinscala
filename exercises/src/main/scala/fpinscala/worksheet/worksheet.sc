@@ -6,4 +6,6 @@ val addOneToTwoArgs = addThree(1) _
 
 addOneToTwoArgs(3, 2)
 
+addThree(5)(4,99)
+
 

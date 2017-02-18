@@ -7,8 +7,9 @@ trait RNG {
   def nextInt: (Int, RNG)
 }
 
-object RNG { // NB - this was called SimpleRNG in the book text
+object RNG {
 
+  // NB - this was called SimpleRNG in the book text
   case class Simple(seed: Long) extends RNG {
     def nextInt: (Int, RNG) = {
       // `&` is bitwise AND. We use the current seed to generate a new seed.
@@ -24,7 +25,7 @@ object RNG { // NB - this was called SimpleRNG in the book text
 
   type Rand[+A] = RNG => (A, RNG)
 
-  val int: Rand[Int] = _.nextInt
+  val int: Rand[Int] = (rng) => rng.nextInt
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 
@@ -33,6 +34,8 @@ object RNG { // NB - this was called SimpleRNG in the book text
       val (a, rng2) = s(rng)
       (f(a), rng2)
     }
+
+  def boolean: Rand[Boolean] = map(int)(i => i > 0)
 
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 

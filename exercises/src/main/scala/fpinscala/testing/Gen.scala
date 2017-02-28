@@ -12,8 +12,6 @@ chapter.
 
 trait Prop {
   def check: Either[(FailedCase, SuccessCount), SuccessCount]
-
-  def &&(p: Prop): Prop = ???
 }
 
 object Prop {
@@ -25,7 +23,15 @@ object Prop {
 
 case class Gen[+A](sample: State[RNG, A]) {
   def map[A, B](f: A => B): Gen[B] = ???
-  def flatMap[A, B](f: A => Gen[B]): Gen[B] = ???
+
+  def flatMap[B](f: A => Gen[B]): Gen[B] =
+    Gen(sample.flatMap(a => f(a).sample))
+
+  def listOfN(size: Int): Gen[List[A]] =
+    Gen.listOfN(size, this)
+
+  def listOfN(size: Gen[Int]): Gen[List[A]] =
+    size.flatMap(this.listOfN(_))
 }
 
 object Gen {
@@ -40,5 +46,3 @@ object Gen {
     Gen[Int](
       State(RNG.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
 }
-
-trait SGen[+A] {}
